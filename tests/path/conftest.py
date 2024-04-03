@@ -22,21 +22,18 @@ def gen_table(table: list[object]) -> str:
 def pivot_timings(captured_timings: Mapping[int, list[dict]]) -> list[dict]:
     """ pivot timings by iterations, name"""
 
-    headers: list[str] = [
-        'Iterations',
-        *sorted([
-            event['name']
-            for k, grp in captured_timings.items() if k == 2_000_000
-            for event in grp
-        ])
-    ]
+    headers: list[str] = sorted(
+        event['name']
+        for k, grp in captured_timings.items() if k == 2_000_000
+        for event in grp
+    )
 
     pivot = [
         {
             'Iterations': iteration,
             **{
                 h: event['time_taken'] if event and 'time_taken' in event else ''
-                for h in headers[1:]
+                for h in headers
                 for event in grp if event['name'] == h
             }
         }
@@ -56,7 +53,7 @@ def timings():
     print(table)
 
 
-@pytest.fixture(scope='module')
+@pytest.fixture
 def capture_timing():
     def wrapper(number: int, time_taken: float, name: str, timings_map: Mapping[int, list[dict]]):
         timings_map[number].append({
