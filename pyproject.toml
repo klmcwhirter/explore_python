@@ -14,9 +14,15 @@ distribution = false
 
 [tool.pdm.dev-dependencies]
 dev = [
+    "autopep8>=2.1.0",
     "pytest>=8.1.1",
     "tabulate>=0.9.0",
 ]
 
 [tool.pdm.scripts]
+clean.shell = "find . -type d -name __pycache__ -exec rm -fr {} \\;;for d in ${TO_DEL};do echo $d;rm -fr $d;done"
+clean.env = { TO_DEL = "build .coverage coverage.xml log .mypy_cache .pdm-build __pycache__ .pytest_cache src/qwirkle.egg-info .tox dist src/build" }
+clean.help = "Clean environment"
+create.shell = "pdm venv remove -y in-project; pdm install"
+
 test.cmd = "pytest"

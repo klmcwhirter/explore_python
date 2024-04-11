@@ -5,7 +5,21 @@
 groups = ["default", "dev"]
 strategy = ["cross_platform", "inherit_metadata"]
 lock_version = "4.4.1"
-content_hash = "sha256:5e62883d40a41d3595e6982a68333f1fcc4eae7bca072ed1ab645045da93d791"
+content_hash = "sha256:6858b85ad49a317f77d8dd41d11ebfe402b0bccfe133c85cd7ef8aafc0c4cab2"
+
+[[package]]
+name = "autopep8"
+version = "2.1.0"
+requires_python = ">=3.8"
+summary = "A tool that automatically formats Python code to conform to the PEP 8 style guide"
+groups = ["dev"]
+dependencies = [
+    "pycodestyle>=2.11.0",
+]
+files = [
+    {file = "autopep8-2.1.0-py2.py3-none-any.whl", hash = "sha256:2bb76888c5edbcafe6aabab3c47ba534f5a2c2d245c2eddced4a30c4b4946357"},
+    {file = "autopep8-2.1.0.tar.gz", hash = "sha256:1fa8964e4618929488f4ec36795c7ff12924a68b8bf01366c094fc52f770b6e7"},
+]
 
 [[package]]
 name = "colorama"
@@ -50,6 +64,17 @@ groups = ["dev"]
 files = [
     {file = "pluggy-1.4.0-py3-none-any.whl", hash = "sha256:7db9f7b503d67d1c5b95f59773ebb58a8c1c288129a88665838012cfb07b8981"},
     {file = "pluggy-1.4.0.tar.gz", hash = "sha256:8c85c2876142a764e5b7548e7d9a0e0ddb46f5185161049a79b7e974454223be"},
+]
+
+[[package]]
+name = "pycodestyle"
+version = "2.11.1"
+requires_python = ">=3.8"
+summary = "Python style guide checker"
+groups = ["dev"]
+files = [
+    {file = "pycodestyle-2.11.1-py2.py3-none-any.whl", hash = "sha256:44fe31000b2d866f2e41841b18528a505fbd7fef9017b04eff4e2648a0fadc67"},
+    {file = "pycodestyle-2.11.1.tar.gz", hash = "sha256:41ba0e7afc9752dfb53ced5489e89f8186be00e599e712660695b7a75ff2663f"},
 ]
 
 [[package]]
