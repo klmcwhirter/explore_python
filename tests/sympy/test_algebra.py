@@ -11,6 +11,20 @@ def test_will_combine_terms(symbols) -> None:
     assert expected == str(y)
 
 
+def test_factor_will_separate_terms(symbols) -> None:
+    _, _, _, x, y, z, _, _ = symbols
+
+    y = x+x + z + 3*z
+    print(f'{y=}', end=', ')
+
+    expected = '2*(x + 2*z)'
+
+    actual = str(y.factor())
+    print(f'{actual=}', end=' ')
+
+    assert expected == actual
+
+
 def test_simplify_will_find_factors(symbols) -> None:
     _, _, _, x, y, _, alpha, _ = symbols
 
