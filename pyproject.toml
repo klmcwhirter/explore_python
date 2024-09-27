@@ -4,6 +4,8 @@ version = "0.1.0"
 description = "Default template for PDM package"
 authors = [{ name = "Kevin McWhirter", email = "klmcw@yahoo.com" }]
 dependencies = [
+    "gmpy2>=2.2.1",
+    "mpmath[gmpy2]>=1.3.0",
     "numpy>=2.1.1",
     "matplotlib>=3.9.2",
     "sympy>=1.13.3",
