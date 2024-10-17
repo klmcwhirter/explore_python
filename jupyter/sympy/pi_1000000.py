@@ -1,5 +1,5 @@
 
-import sympy as sp
+import sympy as sym
 
 
 def read_digits(file_path: str) -> str:
@@ -11,7 +11,7 @@ def read_digits(file_path: str) -> str:
     return content
 
 
-def read_pi_control(file_path: str, num_digits: int) -> sp.Float:
+def read_pi_control(file_path: str, num_digits: int) -> sym.Float:
     digits = read_digits(file_path=file_path)
-    rc = sp.Float(digits, num_digits)
+    rc = sym.Float(digits, num_digits)
     return rc
