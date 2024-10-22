@@ -12,15 +12,29 @@ import os
 import sys
 import sysconfig
 from contextlib import contextmanager
-from dataclasses import dataclass
+from dataclasses import dataclass, field
 from datetime import datetime, timedelta
+from enum import StrEnum
 from functools import reduce
 from typing import Generator
 
 
+class ExecutionMode(StrEnum):
+    Single = 'Single'
+    Processes = 'Processes'
+    Threads = 'Threads'
+
+
+MODES_2_WORKER_NAME = {
+    ExecutionMode.Processes: 'Worker',
+    ExecutionMode.Single: '',
+    ExecutionMode.Threads: 'Thread'
+}
+
+
 @dataclass
 class AppContext:
-    threads: bool = False
+    mode: ExecutionMode = field(init=False)
 
     max_n: int = 1_000_000  # 34_000_000 -> 33_550_336
 
@@ -31,11 +45,14 @@ class AppContext:
     verbose: bool = False
 
     def __post_init__(self):
-        self.threads = not self.gil_disabled
+        self.mode = ExecutionMode.Threads if not self.gil_disabled else ExecutionMode.Processes
 
     @property
     def executor_cls(self) -> concurrent.futures.Executor:
-        return concurrent.futures.ThreadPoolExecutor if self.threads else concurrent.futures.ProcessPoolExecutor
+
+        return concurrent.futures.ThreadPoolExecutor if self.mode == ExecutionMode.Threads \
+            else concurrent.futures.ProcessPoolExecutor if self.mode == ExecutionMode.Processes \
+            else concurrent.futures.Executor  # fallback to abstract class
 
     @property
     def gil_config(self) -> int:
@@ -44,10 +61,6 @@ class AppContext:
     @property
     def gil_disabled(self) -> int:
         return self.gil_config != 1
-
-    @property
-    def worker_prefix(self) -> str:
-        return 'Thread' if self.threads else 'Worker'
 
     def log_exec_ctx(self):
         logging.debug(f'{sys.version=}')
@@ -66,8 +79,22 @@ class AppContext:
         # print(args)
         self.max_n = args.max_n
         self.num_workers = args.num_workers
-        self.threads = False if args.processes else args.threads
+
+        self.mode = ExecutionMode.Single if args.single_threaded \
+            else ExecutionMode.Processes if args.processes \
+            else ExecutionMode.Threads if args.threads \
+            else self.mode
+
         self.verbose = args.verbose
+
+    def setup_logging(self) -> None:
+        log_level = logging.DEBUG if self.verbose else logging.INFO
+        logging.basicConfig(level=log_level, format='{asctime} - {module} - {funcName} - {levelname} - {message}', style='{')
+
+    def worker_name(self, idx=0) -> str:
+        prefix = MODES_2_WORKER_NAME[self.mode]
+        rc = f'{prefix}-{idx}' if self.mode != ExecutionMode.Single else prefix
+        return rc
 
 
 @contextmanager
@@ -80,24 +107,25 @@ def parse_args() -> Generator[AppContext, None, None]:
     parser.add_argument('-w', '--num-workers', type=int, default=ctx.num_workers,
                         help=f'number of worker processes to use (default: {ctx.num_workers})')
     parser.add_argument('-p', '--processes', default=False, action='store_true',
-                        help=f'force use of processes instead of threads (default: {ctx.gil_disabled})')
-    parser.add_argument('-t', '--threads', default=(not ctx.gil_disabled), action='store_true',
-                        help=f'force use of threads instead of processes (default: {not ctx.gil_disabled})')
+                        help=f'force use of processes instead of threads')
+    parser.add_argument('-s', '--single-threaded', default=False, action='store_true',
+                        help=f'force use of no parallelization')
+    parser.add_argument('-t', '--threads', default=False, action='store_true',
+                        help=f'force use of threads instead of processes')
     parser.add_argument('-v', '--verbose', default=False, action='store_true',
                         help='Enable verbose mode')
 
     args = parser.parse_args()
     ctx.set_from_args(args)
 
-    log_level = logging.DEBUG if ctx.verbose else logging.INFO
-    logging.basicConfig(level=log_level, format='{asctime} - {module} - {funcName} - {levelname} - {message}', style='{')
-
+    ctx.setup_logging()
     ctx.log_exec_ctx()
 
     yield ctx
 
 
-def find_perfect_numbers_range(*rng: int, idx: int, worker_prefix: str) -> list[int]:
+def find_perfect_numbers_range(rng: tuple[int], idx: int, ctx: AppContext) -> list[int]:
+    '''worker function'''
     def _is_perfect(n: int) -> bool:
         def _factors(n: int) -> set[int]:
             return set(reduce(
@@ -108,14 +136,19 @@ def find_perfect_numbers_range(*rng: int, idx: int, worker_prefix: str) -> list[
 
         return n == sum([f for f in _factors(n) if n != f])
 
-    logging.debug(f'{worker_prefix}-{idx} processing ({rng[0]:_}, {rng[-1]:_})')
+    logging.debug(f'{ctx.worker_name(idx=idx)} processing ({rng[0]:_}, {rng[-1]:_})')
 
-    rc = [i for i in range(rng[0], rng[1]+1) if _is_perfect(i)]
+    rc = [i for i in range(rng[0], rng[-1]+1) if _is_perfect(i)]
 
     return rc
 
 
 def find_perfect_numbers(ctx: AppContext) -> list[int]:
+    if ctx.mode == ExecutionMode.Single:
+        return sorted(list(set(
+            find_perfect_numbers_range(rng=tuple(range(1, ctx.max_n+1)), idx=0, ctx=ctx)
+        )))
+
     def _batched_by_work_for_workers(max_n: int, num_workers: int) -> list[tuple[int, int]]:
         '''Distribute work evenly across all workers; returns list of begin/end number ranges'''
 
@@ -139,8 +172,11 @@ def find_perfect_numbers(ctx: AppContext) -> list[int]:
     results = set[int]()
 
     with ctx.executor_cls(max_workers=ctx.num_workers) as executor:
+        # from pprint import pprint
+        # pprint(_batched_by_work_for_workers(ctx.max_n, ctx.num_workers), sort_dicts=False)
+
         futures = {
-            executor.submit(find_perfect_numbers_range, *rng, idx=idx, worker_prefix=ctx.worker_prefix): idx
+            executor.submit(find_perfect_numbers_range, rng=rng, idx=idx, ctx=ctx): idx
             for idx, rng in enumerate(_batched_by_work_for_workers(ctx.max_n, ctx.num_workers))
         }
 
@@ -149,12 +185,12 @@ def find_perfect_numbers(ctx: AppContext) -> list[int]:
             result = future.result()
 
             if result and len(result) > 0:
-                logging.debug(f'Adding result from {ctx.worker_prefix}-{idx}')
+                logging.debug(f'Adding result from {ctx.worker_name(idx=idx)}')
                 results.update(result)
             else:
-                logging.debug(f'Skipping empty result from {ctx.worker_prefix}-{idx}')
+                logging.debug(f'Skipping empty result from {ctx.worker_name(idx=idx)}')
 
-    return sorted(list(results))
+        return sorted(list(results))
 
 
 if __name__ == '__main__':
