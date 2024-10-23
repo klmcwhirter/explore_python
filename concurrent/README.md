@@ -96,16 +96,20 @@ than even when using the `Processes` model with python3.13 but the difference is
 So I am going to call those a wash.
 
 The `Processes` execution model with python3.13t does enjoy similar performance as when using the `Threads`
-execution model. *I offer no explanation for this unexpected outcome.* However both of these are very similar to using the `Processes` model with python3.13.
+execution model. *I offer no explanation for this unexpected outcome.* However both of these are very similar
+to using the `Processes` model with python3.13.
 
-However, the risks associated with execution integrity explains why they do not support the python3.13t
-executable in production. And my results do not show a compelling reason to do so.
+The `Single` model lags behind the production executable for the same unexplainable reason.
 
-Just stick with the `Processes` model for now while the experimentation continues.
+The risks associated with execution integrity explains why they do not support the python3.13t
+executable in production. And the results above do not show a compelling reason to do so.
+
+**Recommendation:** Just stick with the `Processes` model for now while the experimentation continues.
+
 
 ## Appendix A - Results with `-n 33_551_000` and `-w 12`
 
-These results were purposely (albeit selfishly, because of time commitment) trimmed down to the perhaps interesting data points.
+These results were purposely (albeit selfishly, because of time commitment) trimmed down to perhaps the interesting data points.
 
 > As `max_n` grows in size, the experimental executable loses its performance similarity.
 
