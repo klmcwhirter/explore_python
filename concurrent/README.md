@@ -122,9 +122,9 @@ These results were purposely (albeit selfishly, because of time commitment) trim
 
 | Command Line | Results | Elapsed Time |
 | :-- | :--: | --: |
-| python3.13t perfects.py -n 33_551_000 -w 12 | [6, 28, 496, 8128, 33550336] | **0:18:46.103803** |
+| python3.13t perfects.py -n 33_551_000 -w 12 | [6, 28, 496, 8128, 33550336] | 0:18:21.164616 |
 | python3.13t perfects.py -n 33_551_000 -w 12 -v | [6, 28, 496, 8128, 33550336] | 0:18:28.153575 |
 | python3.13t perfects.py -n 33_551_000 -w 12 -p | [6, 28, 496, 8128, 33550336] | 0:18:02.101572 |
 | python3.13t perfects.py -n 33_551_000 -w 12 -p -v | [6, 28, 496, 8128, 33550336] | 0:18:10.316738 |
-| python3.13t perfects.py -n 33_551_000 -w 12 -t | [6, 28, 496, 8128, 33550336] | 0:18:35.191395 |
+| python3.13t perfects.py -n 33_551_000 -w 12 -t | [6, 28, 496, 8128, 33550336] | **0:18:35.191395** |
 | python3.13t perfects.py -n 33_551_000 -w 12 -t -v | [6, 28, 496, 8128, 33550336] | 0:18:27.886885 |
