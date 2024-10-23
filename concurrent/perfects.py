@@ -146,7 +146,7 @@ def find_perfect_numbers_range(rng: tuple[int], idx: int, ctx: AppContext) -> li
                 []
             ))
 
-        return n == sum([f for f in _factors(n) if n != f])
+        return n == sum(f for f in _factors(n) if n != f)
 
     logging.debug(f'{ctx.worker_name(idx=idx)} processing ({rng[0]:_}, {rng[-1]:_})')
 
