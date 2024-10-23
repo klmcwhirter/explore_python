@@ -26,7 +26,7 @@ class ExecutionMode(StrEnum):
     Threads = auto()
 
 
-MODES_2_WORKER_NAME = {
+MODE_2_WORKER_NAME = {
     ExecutionMode.Processes: 'Worker',
     ExecutionMode.Single: '',
     ExecutionMode.Threads: 'Thread'
@@ -97,7 +97,7 @@ class AppContext:
         logging.basicConfig(level=log_level, format='{asctime} - {module} - {funcName} - {levelname} - {message}', style='{')
 
     def worker_name(self, idx=0) -> str:
-        prefix = MODES_2_WORKER_NAME[self.mode]
+        prefix = MODE_2_WORKER_NAME[self.mode]
         rc = f'{prefix}-{idx}' if self.mode != ExecutionMode.Single else prefix
         return rc
 
