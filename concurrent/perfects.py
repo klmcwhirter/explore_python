@@ -8,21 +8,22 @@ Also has support for /usr/bin/python3.13t - NoGIL
 import argparse
 import concurrent.futures
 import logging
+import multiprocessing as mp
 import os
 import sys
 import sysconfig
 from contextlib import contextmanager
 from dataclasses import dataclass, field
 from datetime import datetime, timedelta
-from enum import StrEnum
+from enum import StrEnum, auto
 from functools import reduce
 from typing import Generator
 
 
 class ExecutionMode(StrEnum):
-    Single = 'Single'
-    Processes = 'Processes'
-    Threads = 'Threads'
+    Single = auto()
+    Processes = auto()
+    Threads = auto()
 
 
 MODES_2_WORKER_NAME = {
@@ -62,9 +63,14 @@ class AppContext:
     def gil_disabled(self) -> int:
         return self.gil_config != 1
 
-    def log_exec_ctx(self):
+    def log_exec_ctx(self) -> None:
         logging.debug(f'{sys.version=}')
 
+        self.log_gil_availability()
+
+        logging.debug(self)
+
+    def log_gil_availability(self) -> None:
         if self.gil_config is None:
             msg = 'GIL cannot be disabled'
         elif self.gil_config == 0:
@@ -73,7 +79,6 @@ class AppContext:
             msg = 'GIL is disabled'
 
         logging.debug(msg)
-        logging.debug(self)
 
     def set_from_args(self, args: argparse.Namespace) -> None:
         # print(args)
@@ -99,6 +104,8 @@ class AppContext:
 
 @contextmanager
 def parse_args() -> Generator[AppContext, None, None]:
+    '''parses cli args and returns app context'''
+
     ctx = AppContext()
 
     parser = argparse.ArgumentParser()
@@ -125,9 +132,14 @@ def parse_args() -> Generator[AppContext, None, None]:
 
 
 def find_perfect_numbers_range(rng: tuple[int], idx: int, ctx: AppContext) -> list[int]:
-    '''worker function'''
-    def _is_perfect(n: int) -> bool:
+    '''worker function that finds perfect numbers within a range of values for n'''
+
+    def _is_perfect_number(n: int) -> bool:
+        '''Determines if n is a perfect number.'''
+
         def _factors(n: int) -> set[int]:
+            '''Returns set of unique factors of n, excluding n itself'''
+
             return set(reduce(
                 list.__add__,
                 ([i, n//i] for i in range(1, int(n**0.5) + 1) if n % i == 0),
@@ -138,46 +150,45 @@ def find_perfect_numbers_range(rng: tuple[int], idx: int, ctx: AppContext) -> li
 
     logging.debug(f'{ctx.worker_name(idx=idx)} processing ({rng[0]:_}, {rng[-1]:_})')
 
-    rc = [i for i in range(rng[0], rng[-1]+1) if _is_perfect(i)]
+    rc = [i for i in range(rng[0], rng[-1]+1) if _is_perfect_number(i)]
 
     return rc
 
 
 def find_perfect_numbers(ctx: AppContext) -> list[int]:
+    '''Orchestrates the process for finding perfect numbers'''
+
     if ctx.mode == ExecutionMode.Single:
-        return sorted(list(set(
-            find_perfect_numbers_range(rng=tuple(range(1, ctx.max_n+1)), idx=0, ctx=ctx)
-        )))
-
-    def _batched_by_work_for_workers(max_n: int, num_workers: int) -> list[tuple[int, int]]:
-        '''Distribute work evenly across all workers; returns list of begin/end number ranges'''
-
-        windows = [(0, 0)] * num_workers
-
-        items_per_worker = int(max_n // num_workers) + 1
-
-        last_idx = 1
-        for t in range(num_workers):
-            next_idx = min(max_n, last_idx + items_per_worker)
-
-            windows[t] = (last_idx, next_idx)
-
-            if next_idx >= max_n:
-                break
-
-            last_idx = next_idx + 1
-
-        return windows
+        return find_perfect_numbers_range(rng=(1, ctx.max_n+1), idx=0, ctx=ctx)
 
     results = set[int]()
 
-    with ctx.executor_cls(max_workers=ctx.num_workers) as executor:
-        # from pprint import pprint
-        # pprint(_batched_by_work_for_workers(ctx.max_n, ctx.num_workers), sort_dicts=False)
+    with ctx.executor_cls(max_workers=ctx.num_workers, initializer=ctx.setup_logging) as executor:
+        '''Use executor to parallelize the process of finding perfect numbers'''
+
+        def _number_ranges(max_n: int, num_workers: int) -> list[tuple[int, int]]:
+            '''Distribute work evenly across all workers; returns list of begin/end number ranges'''
+
+            windows = [(0, 0)] * num_workers
+
+            items_per_worker = int(max_n // num_workers) + 1
+
+            last_idx = 1
+            for t in range(num_workers):
+                next_idx = min(max_n, last_idx + items_per_worker)
+
+                windows[t] = (last_idx, next_idx)
+
+                if next_idx >= max_n:
+                    break
+
+                last_idx = next_idx + 1
+
+            return windows
 
         futures = {
             executor.submit(find_perfect_numbers_range, rng=rng, idx=idx, ctx=ctx): idx
-            for idx, rng in enumerate(_batched_by_work_for_workers(ctx.max_n, ctx.num_workers))
+            for idx, rng in enumerate(_number_ranges(ctx.max_n, ctx.num_workers))
         }
 
         for future in concurrent.futures.as_completed(futures):
@@ -190,15 +201,18 @@ def find_perfect_numbers(ctx: AppContext) -> list[int]:
             else:
                 logging.debug(f'Skipping empty result from {ctx.worker_name(idx=idx)}')
 
-        return sorted(list(results))
+    return sorted(list(results))
 
 
 if __name__ == '__main__':
+    mp.set_start_method('spawn')  # in case --processes is requested
+
     with parse_args() as ctx:
         logging.debug('bootstrapping ...')
-
         start_time = datetime.now()
+
         result = find_perfect_numbers(ctx)
+
         elapsed_time: timedelta = datetime.now() - start_time
         logging.info(f'{result} are perfect numbers in {elapsed_time}')
 
