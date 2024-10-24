@@ -95,11 +95,11 @@ The `Threads` execution model with the experimental executable (python3.13t) is 
 than even when using the `Processes` model with python3.13 but the difference is within a reasonable margin of error.
 So I am going to call those a wash.
 
-The `Processes` execution model with python3.13t does enjoy similar performance as when using the `Threads`
-execution model. *I offer no explanation for this unexpected outcome.* However both of these are very similar
+The `Threads` execution model with python3.13t does enjoy similar performance as when using the `Processes`
+execution model because it is able to use multiple cores with the NoGIL behavior. However both of these are very similar
 to using the `Processes` model with python3.13.
 
-The `Single` model lags behind the production executable for the same unexplainable reason.
+The performance of the `Single` model lags behind the production executable for some unknown reason.
 
 The risks associated with execution integrity explains why they do not support the python3.13t
 executable in production. And the results above do not show a compelling reason to do so.

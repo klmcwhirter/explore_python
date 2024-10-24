@@ -46,7 +46,7 @@ class AppContext:
     verbose: bool = False
 
     def __post_init__(self):
-        self.mode = ExecutionMode.Threads if not self.gil_disabled else ExecutionMode.Processes
+        self.mode = ExecutionMode.Threads if self.gil_disabled else ExecutionMode.Processes
 
     @property
     def executor_cls(self) -> concurrent.futures.Executor:
@@ -56,12 +56,12 @@ class AppContext:
             else concurrent.futures.Executor  # fallback to abstract class
 
     @property
-    def gil_config(self) -> int:
+    def gil_config(self) -> int | None:
         return sysconfig.get_config_vars().get('Py_GIL_DISABLED')
 
     @property
     def gil_disabled(self) -> int:
-        return self.gil_config != 1
+        return self.gil_config is not None and self.gil_config == 1
 
     def log_exec_ctx(self) -> None:
         logging.debug(f'{sys.version=}')
@@ -159,7 +159,7 @@ def find_perfect_numbers(ctx: AppContext) -> list[int]:
     '''Orchestrates the process for finding perfect numbers'''
 
     if ctx.mode == ExecutionMode.Single:
-        return find_perfect_numbers_range(rng=(1, ctx.max_n+1), idx=0, ctx=ctx)
+        return find_perfect_numbers_range(rng=(1, ctx.max_n), idx=0, ctx=ctx)
 
     results = set[int]()
 
@@ -208,7 +208,7 @@ if __name__ == '__main__':
     mp.set_start_method('spawn')  # in case --processes is requested
 
     with parse_args() as ctx:
-        logging.debug('bootstrapping ...')
+        logging.debug('starting ...')
         start_time = datetime.now()
 
         result = find_perfect_numbers(ctx)

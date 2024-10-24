@@ -15,7 +15,7 @@ pdm test --run-slowest # be prepared to wait 5 mins or so
 
 I put together a simple test of the NoGIL behavior compiled into the experimental python3.13t executable.
 
-The test plan and results can be found at[concurrent](./concurrent/).
+The test plan and results can be found at [concurrent](./concurrent/).
 
 ## Jupyter notebooks
 
