@@ -10,6 +10,7 @@ import matplotlib.cm as cm
 import matplotlib.pyplot as plt
 import numpy as np
 from mpl_toolkits.axes_grid1 import make_axes_locatable
+from mpmath import _mpf, mp, mpf
 
 # Computing Pi to 10 digits took 0.000 seconds
 # Computing Pi to 100 digits took 0.005 seconds
@@ -66,8 +67,28 @@ def pi_digits_chud(n: int) -> Decimal:
     return pi
 
 
+def pi_digits_bbp_term(k: int):
+    return 1/mpf(16)**k * \
+        (mpf(4)/(8*k+1) -
+         mpf(2)/(8*k+4) -
+         mpf(1)/(8*k+5) -
+         mpf(1)/(8*k+6))
+
+
 @timer
-def pi_digits_bbp(n: int) -> Decimal:
+def pi_digits_bbp(n: int) -> _mpf:
+    '''From https://stackoverflow.com/a/28285228
+    Also, https://en.wikipedia.org/wiki/Bailey%E2%80%93Borwein%E2%80%93Plouffe_formula
+    '''
+    mp.dps = max(n, mp.dps)
+
+    rc = mp.nsum(pi_digits_bbp_term, [0, n], method='d')
+
+    return rc
+
+
+@timer
+def pi_digits_bbp_decimal(n: int) -> Decimal:
     '''From https://stackoverflow.com/a/28285228'''
     getcontext().prec = n + 3
     return sum(1/Decimal(16)**k *
@@ -125,12 +146,13 @@ if __name__ == "__main__":
     # Compute Pi and print output to the terminal.
     if (args.bbp):
         pi, elapsed = pi_digits_bbp(num_digits)
+        mp.nprint(pi, num_digits)
     else:
         pi, elapsed = pi_digits_chud(num_digits)
         print(f'{cfactorial.cache_info()=}')
+        print(pi)
 
-    print(pi)
-    print(f"Computing Pi to {num_digits} digits took {elapsed:0.3f} seconds")
+    print(f"Computing Pi to {num_digits:_} digits took {elapsed:0.3f} seconds")
 
     # Perform visualization if requested
     if args.show:
