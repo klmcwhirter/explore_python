@@ -1,11 +1,11 @@
 # Experiments on Performance of NoGIL Compile-time Option of python3.13t
 
-The [`perfects.py`](./perfects.py) module finds [perfect numbers](https://mathworld.wolfram.com/PerfectNumber.html) from 1 up to and including some max_n value.
+The [`perfects.py`](./perfects.py) module finds [perfect numbers](https://mathworld.wolfram.com/PerfectNumber.html) from 1 up to and including some `max_n` value.
 
 This problem is suitable for testing concurrent execution models because:
 
-* while there is a formula for predicting where they appear - a brute force method is used by `perfects.py`. This presents as a normalizing effect on the characteristics of the execution model being tested.
-* each value of `n` tested is independent from all other values of `n`; meaning parallelism can be maximized.
+* while there is a formula for predicting where they appear - a brute force method is used by `perfects.py` to find perfect numbers. This presents as a normalizing effect on the characteristics of the execution model being tested
+* the process for testing each value of `n` is independent from all other values of `n`; meaning parallelism can be maximized
 
 [`perfects.py`](./perfects.py) supports the test goals via the following execution models selectable on the command line:
 
@@ -14,11 +14,19 @@ This problem is suitable for testing concurrent execution models because:
 * `Threads` - multiple threads each evaluating an equally sized range of values for `n`
 
 It does this by:
-* simply executing the function for the range `1:max_n` in the `Single` case,
+* simply executing the function that tests for perfect numbers for the range `1:max_n` in the `Single` case,
 * using [concurrent.futures.ProcessPoolExecutor](https://docs.python.org/3/library/concurrent.futures.html#processpoolexecutor) in the `Processes` case,
 * and using [concurrent.futures.ThreadPoolExecutor](https://docs.python.org/3/library/concurrent.futures.html#threadpoolexecutor) in the `Threads` case.
 
-This makes the code completely reusable and eliminates any code differences due to execution model.
+This makes the function that tests for perfect numbers completely reusable; eliminating any code differences due to execution model.
+
+> NOTE: I did not bother with an *asyncio* implementation because I purposely avoided I/O as an additional testing variable. I do realize
+that design decision makes the test less like *real world* scenarios. But the goal was to test concurrency in isolation from other features.
+In other words, what is the significance of the NoGIL behavior and its direct effect on execution models?
+
+### TL;DR
+
+The effect of NoGIL on performance is not much if anything with lower values of `max_n`; and significantly worse performance with higher values.
 
 ## Command-line Options
 
@@ -35,8 +43,7 @@ options:
   -w, --num-workers NUM_WORKERS
                         number of worker processes to use (default: 12)
   -p, --processes       force use of processes instead of threads
-  -s, --single-threaded
-                        force use of no parallelization
+  -s, --single-thread   force use of no parallelization
   -t, --threads         force use of threads instead of processes
   -v, --verbose         Enable verbose mode
 ```
@@ -87,7 +94,8 @@ It appears that the production executable (python3.13) with the GIL enabled is s
 the `Processes` execution model than the experimental executable (python3.13t) with the GIL disabled.
 
 Also, when using the `Threads` execution model its performance is a little worse than the `Single` model.
-This makes sense because the GIL is in effect.
+This makes sense because the GIL is in effect and there is a little overhead associated with using a thread pool,
+and multiple threads in general.
 
 ### Experimental Executable (python3.13t)
 

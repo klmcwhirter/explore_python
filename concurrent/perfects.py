@@ -85,7 +85,7 @@ class AppContext:
         self.max_n = args.max_n
         self.num_workers = args.num_workers
 
-        self.mode = ExecutionMode.Single if args.single_threaded \
+        self.mode = ExecutionMode.Single if args.single_thread \
             else ExecutionMode.Processes if args.processes \
             else ExecutionMode.Threads if args.threads \
             else self.mode
@@ -115,7 +115,7 @@ def parse_args() -> Generator[AppContext, None, None]:
                         help=f'number of worker processes to use (default: {ctx.num_workers})')
     parser.add_argument('-p', '--processes', default=False, action='store_true',
                         help=f'force use of processes instead of threads')
-    parser.add_argument('-s', '--single-threaded', default=False, action='store_true',
+    parser.add_argument('-s', '--single-thread', default=False, action='store_true',
                         help=f'force use of no parallelization')
     parser.add_argument('-t', '--threads', default=False, action='store_true',
                         help=f'force use of threads instead of processes')
