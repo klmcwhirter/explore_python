@@ -17,6 +17,7 @@ It does this by:
 * simply executing the function that tests for perfect numbers for the range `1:max_n` in the `Single` case,
 * using [concurrent.futures.ProcessPoolExecutor](https://docs.python.org/3/library/concurrent.futures.html#processpoolexecutor) in the `Processes` case,
 * and using [concurrent.futures.ThreadPoolExecutor](https://docs.python.org/3/library/concurrent.futures.html#threadpoolexecutor) in the `Threads` case.
+* explicitly avoiding any shared state between the workers except for things that will not change (e.g. `ctx.worker_name(idx)`).
 
 This makes the function that tests for perfect numbers completely reusable; eliminating any code differences due to execution model.
 
@@ -124,7 +125,7 @@ executable in production is not supported yet. And the results above do not show
 These results were purposely (albeit selfishly, because of time commitment) trimmed down to perhaps the most interesting data points.
 
 > As `max_n` grows in size, the experimental executable loses its performance similarity. *This is more than likely due to the overhead
-associated with context switching and resource contention.*
+associated with more aggressive context switching; resulting in additional resource contention.*
 
 ### Production Executable (python3.13)
 
