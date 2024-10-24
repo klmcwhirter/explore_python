@@ -1,13 +1,13 @@
 # Experiments on Performance of NoGIL Compile-time Option of python3.13t
 
-The `perfects.py` module finds [perfect numbers](https://mathworld.wolfram.com/PerfectNumber.html) from 1 up to and including some max_n value.
+The [`perfects.py`](./perfects.py) module finds [perfect numbers](https://mathworld.wolfram.com/PerfectNumber.html) from 1 up to and including some max_n value.
 
-This problem is suitable for testing concurrent executions models because:
+This problem is suitable for testing concurrent execution models because:
 
-* while there is a formula for predicting where they appear - a brute force method is used by `perfects.py`. This presents as a normalizing effect on the execution characteristics of the model being employed.
+* while there is a formula for predicting where they appear - a brute force method is used by `perfects.py`. This presents as a normalizing effect on the characteristics of the execution model being tested.
 * each value of `n` tested is independent from all other values of `n`; meaning parallelism can be maximized.
 
-`perfects.py` supports the test goals via the following execution models selectable on the command line:
+[`perfects.py`](./perfects.py) supports the test goals via the following execution models selectable on the command line:
 
 * `Single` - standard single threaded execution model
 * `Processes` - multiple processes each evaluating an equally sized range of values for `n`
@@ -43,7 +43,7 @@ options:
 
 ## Goal of perfects_driver.sh
 
-The goal of perfects_driver.sh is to compare the validity of the results produced,
+The goal of [`perfects_driver.sh`](./perfects_driver.sh) is to compare the validity of the results produced,
 and time the actual execution component of the process of a matrix of the options.
 
 The `-n 1_000_000` and `-w 10` options remain constant.
@@ -51,33 +51,33 @@ The `-n 1_000_000` and `-w 10` options remain constant.
 > Note the `-w` option is ignored when the -s option (`Single` execution model) is requested.
 > That is indicated below by the use of ~~strikethrough~~.
 
-Here are the results from one typical run:
+Here are the [results](./perfects_driver.out) from one typical run:
 
 ### Production Executable (python3.13)
 
 | Command Line | Results | Elapsed Time |
 | :-- | :--: | --: |
-| **python3.13** perfects.py -n 1_000_000 -w 10 | [6, 28, 496, 8128] | 0:00:04.291743 |
-| python3.13 perfects.py -n 1_000_000 -w 10 -v | [6, 28, 496, 8128] | 0:00:04.294041 |
-| python3.13 perfects.py -n 1_000_000 -w 10 -p | [6, 28, 496, 8128] | **0:00:04.263898** |
-| python3.13 perfects.py -n 1_000_000 -w 10 -p -v | [6, 28, 496, 8128] | 0:00:04.696332 |
-| python3.13 perfects.py -n 1_000_000 ~~-w 10~~ -s | [6, 28, 496, 8128] | 0:00:19.448831 |
-| python3.13 perfects.py -n 1_000_000 ~~-w 10~~ -s -v | [6, 28, 496, 8128] | 0:00:19.344277 |
-| python3.13 perfects.py -n 1_000_000 -w 10 -t | [6, 28, 496, 8128] | 0:00:20.141020 |
-| python3.13 perfects.py -n 1_000_000 -w 10 -t -v | [6, 28, 496, 8128] | 0:00:20.273820 |
+| **python3.13** perfects.py -n 1_000_000 -w 10 | [6, 28, 496, 8128] | **0:00:04.192254** |
+| python3.13 perfects.py -n 1_000_000 -w 10 -v | [6, 28, 496, 8128] | 0:00:04.215628 |
+| python3.13 perfects.py -n 1_000_000 -w 10 -p | [6, 28, 496, 8128] | 0:00:04.196177 |
+| python3.13 perfects.py -n 1_000_000 -w 10 -p -v | [6, 28, 496, 8128] | 0:00:04.243090 |
+| python3.13 perfects.py -n 1_000_000 ~~-w 10~~ -s | [6, 28, 496, 8128] | 0:00:19.412308 |
+| python3.13 perfects.py -n 1_000_000 ~~-w 10~~ -s -v | [6, 28, 496, 8128] | 0:00:19.406344 |
+| python3.13 perfects.py -n 1_000_000 -w 10 -t | [6, 28, 496, 8128] | 0:00:20.159437 |
+| **python3.13** perfects.py -n 1_000_000 -w 10 -t -v | [6, 28, 496, 8128] | **0:00:20.342431** |
 
 ### Experimental Executable (python3.13t)
 
 | Command Line | Results | Elapsed Time |
 | :-- | :--: | --: |
-| python3.13t perfects.py -n 1_000_000 -w 10 | [6, 28, 496, 8128] | 0:00:05.239328 |
-| python3.13t perfects.py -n 1_000_000 -w 10 -v | [6, 28, 496, 8128] | 0:00:05.104479 |
-| python3.13t perfects.py -n 1_000_000 -w 10 -p | [6, 28, 496, 8128] | 0:00:05.282542 |
-| python3.13t perfects.py -n 1_000_000 -w 10 -p -v | [6, 28, 496, 8128] | 0:00:05.371516 |
-| python3.13t perfects.py -n 1_000_000 ~~-w 10~~ -s | [6, 28, 496, 8128] | 0:00:25.078917 |
-| **python3.13t** perfects.py -n 1_000_000 ~~-w 10~~ **-s** -v | [6, 28, 496, 8128] | **0:00:25.114644** |
-| python3.13t perfects.py -n 1_000_000 -w 10 -t | [6, 28, 496, 8128] | 0:00:05.239508 |
-| python3.13t perfects.py -n 1_000_000 -w 10 -t -v | [6, 28, 496, 8128] | 0:00:04.969282 |
+| **python3.13t** perfects.py -n 1_000_000 -w 10 | [6, 28, 496, 8128] | **0:00:04.841594** |
+| python3.13t perfects.py -n 1_000_000 -w 10 -v | [6, 28, 496, 8128] | 0:00:05.208515 |
+| python3.13t perfects.py -n 1_000_000 -w 10 -p | [6, 28, 496, 8128] | 0:00:05.306935 |
+| python3.13t perfects.py -n 1_000_000 -w 10 -p -v | [6, 28, 496, 8128] | 0:00:05.952637 |
+| python3.13t perfects.py -n 1_000_000 ~~-w 10~~ -s | [6, 28, 496, 8128] | 0:00:25.363863 |
+| **python3.13t** perfects.py -n 1_000_000 ~~-w 10~~ **-s** -v | [6, 28, 496, 8128] | **0:00:26.044659** |
+| python3.13t perfects.py -n 1_000_000 -w 10 -t | [6, 28, 496, 8128] | 0:00:05.137568 |
+| python3.13t perfects.py -n 1_000_000 -w 10 -t -v | [6, 28, 496, 8128] | 0:00:05.254062 |
 
 ## Results Summary
 
@@ -91,7 +91,7 @@ This makes sense because the GIL is in effect.
 
 ### Experimental Executable (python3.13t)
 
-The `Threads` execution model with the experimental executable (python3.13t) is slightly more performant
+The `Threads` execution model with the experimental executable (python3.13t) is slightly less performant
 than even when using the `Processes` model with python3.13 but the difference is within a reasonable margin of error.
 So I am going to call those a wash.
 
@@ -99,10 +99,12 @@ The `Threads` execution model with python3.13t does enjoy similar performance as
 execution model because it is able to use multiple cores with the NoGIL behavior. However both of these are very similar
 to using the `Processes` model with python3.13.
 
+And, as `max_n` increases (see **Appendix A** below) the performance benefits trail off significantly.
+
 The performance of the `Single` model lags behind the production executable for some unknown reason.
 
-The risks associated with execution integrity explains why they do not support the python3.13t
-executable in production. And the results above do not show a compelling reason to do so.
+In addition, the potential risks associated with execution integrity without the GIL explains why using the python3.13t
+executable in production is not supported yet. And the results above do not show a compelling reason to do so.
 
 **Recommendation:** Just stick with the `Processes` model for now while the experimentation continues.
 
@@ -111,7 +113,8 @@ executable in production. And the results above do not show a compelling reason 
 
 These results were purposely (albeit selfishly, because of time commitment) trimmed down to perhaps the most interesting data points.
 
-> As `max_n` grows in size, the experimental executable loses its performance similarity.
+> As `max_n` grows in size, the experimental executable loses its performance similarity. *This is more than likely due to the overhead
+associated with context switching and resource contention.*
 
 ### Production Executable (python3.13)
 
