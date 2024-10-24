@@ -138,7 +138,7 @@ def find_perfect_numbers_range(rng: tuple[int], idx: int, ctx: AppContext) -> li
         '''Determines if n is a perfect number.'''
 
         def _factors(n: int) -> set[int]:
-            '''Returns set of unique factors of n, excluding n itself'''
+            '''Returns set of unique factors of n'''
 
             return set(reduce(
                 list.__add__,

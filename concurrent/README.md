@@ -109,7 +109,7 @@ executable in production. And the results above do not show a compelling reason 
 
 ## Appendix A - Results with `-n 33_551_000` and `-w 12`
 
-These results were purposely (albeit selfishly, because of time commitment) trimmed down to perhaps the interesting data points.
+These results were purposely (albeit selfishly, because of time commitment) trimmed down to perhaps the most interesting data points.
 
 > As `max_n` grows in size, the experimental executable loses its performance similarity.
 
