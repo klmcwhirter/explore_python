@@ -58,6 +58,8 @@ The `-n 1_000_000` and `-w 10` options remain constant.
 > Note the `-w` option is ignored when the -s option (`Single` execution model) is requested.
 > That is indicated below by the use of ~~strikethrough~~.
 
+The **lowest** and **highest** execution times in each group are indicated with **bold** typeface.
+
 Here are the [results](./perfects_driver.out) from one typical run:
 
 ### Production Executable (python3.13)
@@ -129,9 +131,9 @@ associated with context switching and resource contention.*
 | Command Line | Results | Elapsed Time |
 | :-- | :--: | --: |
 | python3.13 perfects.py -n 33_551_000 -w 12 | [6, 28, 496, 8128, 33550336] | 0:14:46.709272 |
-| python3.13 perfects.py -n 33_551_000 -w 12 -v | [6, 28, 496, 8128, 33550336] | 0:14:46.351818 |
+| **python3.13** perfects.py -n 33_551_000 -w 12 -v | [6, 28, 496, 8128, 33550336] | **0:14:46.351818** |
 | python3.13 perfects.py -n 33_551_000 -w 12 -p | [6, 28, 496, 8128, 33550336] | 0:14:47.447327 |
-| python3.13 perfects.py -n 33_551_000 -w 12 -p -v | [6, 28, 496, 8128, 33550336] | **0:14:49.279411** |
+| **python3.13** perfects.py -n 33_551_000 -w 12 -p -v | [6, 28, 496, 8128, 33550336] | **0:14:49.279411** |
 
 ### Experimental Executable (python3.13t)
 
@@ -139,7 +141,7 @@ associated with context switching and resource contention.*
 | :-- | :--: | --: |
 | python3.13t perfects.py -n 33_551_000 -w 12 | [6, 28, 496, 8128, 33550336] | 0:18:21.164616 |
 | python3.13t perfects.py -n 33_551_000 -w 12 -v | [6, 28, 496, 8128, 33550336] | 0:18:28.153575 |
-| python3.13t perfects.py -n 33_551_000 -w 12 -p | [6, 28, 496, 8128, 33550336] | 0:18:02.101572 |
+| **python3.13t** perfects.py -n 33_551_000 -w 12 -p | [6, 28, 496, 8128, 33550336] | **0:18:02.101572** |
 | python3.13t perfects.py -n 33_551_000 -w 12 -p -v | [6, 28, 496, 8128, 33550336] | 0:18:10.316738 |
-| python3.13t perfects.py -n 33_551_000 -w 12 -t | [6, 28, 496, 8128, 33550336] | **0:18:35.191395** |
+| **python3.13t** perfects.py -n 33_551_000 -w 12 -t | [6, 28, 496, 8128, 33550336] | **0:18:35.191395** |
 | python3.13t perfects.py -n 33_551_000 -w 12 -t -v | [6, 28, 496, 8128, 33550336] | 0:18:27.886885 |
