@@ -61,7 +61,9 @@ The `-n 1_000_000` and `-w 10` options remain constant.
 
 The **lowest** and **highest** execution times in each group are indicated with **bold** typeface.
 
-Here are the [results](./perfects_driver.out) from one typical run:
+Here are the [results](./perfects_driver-py313-fed40.out) from one typical run with Python3.13 on Fedora WS 40 that is summarized below:
+
+_I retested with Python 3.14.0a1 on Fedora 41. Here are those [results](./perfects_driver-py314a1-fed41.out)._
 
 ### Production Executable (python3.13)
 
