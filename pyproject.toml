@@ -11,8 +11,9 @@ dependencies = [
     "nbformat>=5.10.4",
     "sympy>=1.13.3",
     "scipy>=1.14.1",
+    "wordcloud>=1.9.4",
 ]
-requires-python = ">=3.13"
+requires-python = "==3.13.*"
 readme = "README.md"
 license = { text = "MIT" }
 
@@ -32,7 +33,7 @@ dev = [
 clean.shell = "find . -type d -name __pycache__ -exec rm -fr {} \\;;for d in ${TO_DEL};do echo $d;rm -fr $d;done"
 clean.env = { TO_DEL = "build .coverage coverage.xml log .mypy_cache .pdm-build __pycache__ .pytest_cache src/qwirkle.egg-info .tox dist src/build" }
 clean.help = "Clean environment"
-create.shell = "pdm venv remove -y in-project; pdm install"
+create.shell = "pdm sync"
 
 bbp1000 = "python -m chudnovsky.pi_gist -b 1000"
 chud1000 = "python -m chudnovsky.pi_gist -c 1000"

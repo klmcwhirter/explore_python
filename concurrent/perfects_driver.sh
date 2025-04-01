@@ -5,11 +5,11 @@ NUM_WORKERS=10
 
 # cycle through matrix of options
 
-for p in python3.13 python3.13t
+for p in python3.14 python3.14t
 do
-  for em in '' '-p' '-s' '-t'
+  for em in '-p' '-i' '-s' '-t'
   do
-    for v in '' '-v'
+    for v in '-v'
     do
       echo
       echo "pause for 5 secs to coalesce ..."

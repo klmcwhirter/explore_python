@@ -1,20 +1,22 @@
-# Experiments on Performance of NoGIL Compile-time Option of python3.13t
+# Experiments on Performance of NoGIL Compile-time Option Added in python3.13t
 
 The [`perfects.py`](./perfects.py) module finds [perfect numbers](https://mathworld.wolfram.com/PerfectNumber.html) from 1 up to and including some `max_n` value.
 
-This problem is suitable for testing concurrent execution models because:
+This problem is suitable for testing parallelism with concurrent execution models because:
 
-* while there is a formula for predicting where they appear - a brute force method is used by `perfects.py` to find perfect numbers. This presents as a normalizing effect on the characteristics of the execution model being tested
+* while there is a formula for predicting where perfect numbers appear - a brute force method is used by `perfects.py` to find perfect numbers. This presents as a normalizing effect on the characteristics of the execution model being tested
 * the process for testing each value of `n` is independent from all other values of `n`; meaning parallelism can be maximized
 
 [`perfects.py`](./perfects.py) supports the test goals via the following execution models selectable on the command line:
 
 * `Single` - standard single threaded execution model
+* `Interpreters` - multiple threads each evaluating an equally sized range of values for `n` in their own interpreter (new in 3.14)
 * `Processes` - multiple processes each evaluating an equally sized range of values for `n`
 * `Threads` - multiple threads each evaluating an equally sized range of values for `n`
 
 It does this by:
 * simply executing the function that tests for perfect numbers for the range `1:max_n` in the `Single` case,
+* using [concurrent.futures.InterpreterPoolExecutor](https://docs.python.org/3.14/library/concurrent.futures.html#interpreterpoolexecutor) in the `Interpreters` case,
 * using [concurrent.futures.ProcessPoolExecutor](https://docs.python.org/3/library/concurrent.futures.html#processpoolexecutor) in the `Processes` case,
 * and using [concurrent.futures.ThreadPoolExecutor](https://docs.python.org/3/library/concurrent.futures.html#threadpoolexecutor) in the `Threads` case.
 * explicitly avoiding any shared state between the workers except for things that will not change (e.g. `ctx.worker_name(idx)`).
@@ -22,8 +24,10 @@ It does this by:
 This makes the function that tests for perfect numbers completely reusable; eliminating any code differences due to execution model.
 
 > NOTE: I did not bother with an *asyncio* implementation because I purposely avoided I/O as an additional testing variable. I do realize
-that design decision makes the test less like *real world* scenarios. But the goal was to test concurrency in isolation from other features.
+that design decision makes the test less like *real world* scenarios. But the goal was to test parallelism and concurrency in isolation from other features.
 In other words, what is the significance of the NoGIL behavior and its direct effect on execution models?
+
+Also, I eliminated concurrency as a variable by carefully designing away shared state. The worker function simply takes some inputs and returns found perfect numbers in the range of numbers it is evaluating.
 
 ### TL;DR
 
@@ -43,6 +47,7 @@ options:
   -n, --max-n MAX_N     look for perfect numbers up to and including this value (default: 1_000_000)
   -w, --num-workers NUM_WORKERS
                         number of worker processes to use (default: 12)
+  -i, --interpreters    force use of interpreters in threads
   -p, --processes       force use of processes instead of threads
   -s, --single-thread   force use of no parallelization
   -t, --threads         force use of threads instead of processes
@@ -64,6 +69,8 @@ The **lowest** and **highest** execution times in each group are indicated with 
 Here are the [results](./perfects_driver-py313-fed40.out) from one typical run with Python3.13 on Fedora WS 40 that is summarized below:
 
 _I retested with Python 3.14.0a1 on Fedora 41. Here are those [results](./perfects_driver-py314a1-fed41.out)._
+
+_I retested with Python 3.14.0a6 on Fedora 41 and added the `-i` option. Here are those [results](./perfects_driver-py314a6-fed41.out)._
 
 ### Production Executable (python3.13)
 
@@ -119,7 +126,26 @@ The performance of the `Single` model lags behind the production executable for 
 In addition, the potential risks associated with execution integrity without the GIL explains why using the python3.13t
 executable in production is not supported yet. And the results above do not show a compelling reason to do so.
 
-**Recommendation:** Just stick with the `Processes` model for now while the experimentation continues.
+
+### Production Executable (python3.14)
+
+In Python 3.14 the [`concurrent.futures.InterpreterPoolExecutor`](https://docs.python.org/3.14/library/concurrent.futures.html#interpreterpoolexecutor) class was added per [PEP-734](https://peps.python.org/pep-0734/#interpreterpoolexecutor).
+
+As described in PEP-734, this class extends the ThreadPoolExecutor class where each worker runs in its own interpreter. This takes the GIL out of the way of using multiple cores. This happens because each interpreter has its own GIL.
+
+It performs well - as well as ProcessPoolExecutor. _See **Appendix B** below for a snapshot of the results._
+
+But it has limitations.
+
+Communication with the threads (and their interpreters) is done via pickle. See the docs linked above and in PEP-734 for discussion of how pickle (and alternates) are used. This fact does drive the app design to some extent.
+
+In general, I avoided the need for concurrency (i.e., no shared state) to minimize the impact.
+
+### Recommendation:
+
+Just stick with the `Processes` model for now while the experimentation continues. It is supported as early as Python 3.5.
+
+Although the `Interpreters` model could be a good (i.e., safe) alternative once Python 3.14 is released. I say _safe_ because the GIL is still in effect suggesting that most flows through the Python interpreter and stdlib code are flows through long-time existing code. But please do test fit for your purpose.
 
 
 ## Appendix A - Results with `-n 33_551_000` and `-w 12`
@@ -148,3 +174,14 @@ associated with more aggressive context switching; resulting in additional resou
 | python3.13t perfects.py -n 33_551_000 -w 12 -p -v | [6, 28, 496, 8128, 33550336] | 0:18:10.316738 |
 | **python3.13t** perfects.py -n 33_551_000 -w 12 -t | [6, 28, 496, 8128, 33550336] | **0:18:35.191395** |
 | python3.13t perfects.py -n 33_551_000 -w 12 -t -v | [6, 28, 496, 8128, 33550336] | 0:18:27.886885 |
+
+
+### Appendix B - InterpreterPoolExecutor vs ProcessPoolExecutor
+
+### Production Executable (python3.14)
+
+| Command Line | Results | Elapsed Time |
+| :-- | :--: | --: |
+| **python3.14** perfects.py -n 33_551_000 -w 12 **-i** -v | [6, 28, 496, 8128, 33550336] | **0:10:23.770246** |
+| python3.14 perfects.py -n 33_551_000 -w 12 -p -v | [6, 28, 496, 8128, 33550336] | 0:10:31.152181 |
+

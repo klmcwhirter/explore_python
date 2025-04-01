@@ -1,0 +1,202 @@
+
+pause for 5 secs to coalesce ...
+
+python3.14 perfects.py -n 1_000_000 -w 10 -v -p
+2025-03-31 21:12:31,402 - app_context - log_exec_ctx - DEBUG - sys.version='3.14.0a6 (main, Mar 17 2025, 00:00:00) [GCC 14.2.1 20250110 (Red Hat 14.2.1-7)]'
+2025-03-31 21:12:31,402 - app_context - log_gil_availability - DEBUG - GIL is active
+2025-03-31 21:12:31,402 - app_context - log_exec_ctx - DEBUG - AppContext(mode=<ExecutionMode.Processes: 'processes'>, max_n=1000000, num_workers=10, verbose=True)
+2025-03-31 21:12:31,403 - perfects - <module> - DEBUG - starting ...
+2025-03-31 21:12:31,459 - worker - find_perfect_numbers_range - DEBUG - Worker-0 processing (1, 100_002)
+2025-03-31 21:12:31,469 - worker - find_perfect_numbers_range - DEBUG - Worker-1 processing (100_003, 200_004)
+2025-03-31 21:12:31,474 - worker - find_perfect_numbers_range - DEBUG - Worker-2 processing (200_005, 300_006)
+2025-03-31 21:12:31,474 - worker - find_perfect_numbers_range - DEBUG - Worker-3 processing (300_007, 400_008)
+2025-03-31 21:12:31,475 - worker - find_perfect_numbers_range - DEBUG - Worker-4 processing (400_009, 500_010)
+2025-03-31 21:12:31,476 - worker - find_perfect_numbers_range - DEBUG - Worker-5 processing (500_011, 600_012)
+2025-03-31 21:12:31,476 - worker - find_perfect_numbers_range - DEBUG - Worker-6 processing (600_013, 700_014)
+2025-03-31 21:12:31,478 - worker - find_perfect_numbers_range - DEBUG - Worker-7 processing (700_015, 800_016)
+2025-03-31 21:12:31,479 - worker - find_perfect_numbers_range - DEBUG - Worker-8 processing (800_017, 900_018)
+2025-03-31 21:12:31,482 - worker - find_perfect_numbers_range - DEBUG - Worker-9 processing (900_019, 1_000_000)
+2025-03-31 21:12:32,053 - perfects - find_perfect_numbers - DEBUG - Adding result from Worker-0
+2025-03-31 21:12:32,461 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Worker-1
+2025-03-31 21:12:33,247 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Worker-3
+2025-03-31 21:12:33,483 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Worker-2
+2025-03-31 21:12:33,796 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Worker-5
+2025-03-31 21:12:33,980 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Worker-6
+2025-03-31 21:12:34,098 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Worker-4
+2025-03-31 21:12:34,099 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Worker-8
+2025-03-31 21:12:34,485 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Worker-7
+2025-03-31 21:12:34,928 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Worker-9
+2025-03-31 21:12:34,962 - perfects - <module> - INFO - [6, 28, 496, 8128] are perfect numbers in 0:00:03.559670
+2025-03-31 21:12:34,962 - perfects - <module> - DEBUG - done.
+
+pause for 5 secs to coalesce ...
+
+python3.14 perfects.py -n 1_000_000 -w 10 -v -i
+2025-03-31 21:12:40,537 - app_context - log_exec_ctx - DEBUG - sys.version='3.14.0a6 (main, Mar 17 2025, 00:00:00) [GCC 14.2.1 20250110 (Red Hat 14.2.1-7)]'
+2025-03-31 21:12:40,537 - app_context - log_gil_availability - DEBUG - GIL is active
+2025-03-31 21:12:40,537 - app_context - log_exec_ctx - DEBUG - AppContext(mode=<ExecutionMode.Interpreters: 'interpreters'>, max_n=1000000, num_workers=10, verbose=True)
+2025-03-31 21:12:40,537 - perfects - <module> - DEBUG - starting ...
+2025-03-31 21:12:40,583 - worker - find_perfect_numbers_range - DEBUG - Interp-0 processing (1, 100_002)
+2025-03-31 21:12:40,586 - worker - find_perfect_numbers_range - DEBUG - Interp-1 processing (100_003, 200_004)
+2025-03-31 21:12:40,587 - worker - find_perfect_numbers_range - DEBUG - Interp-2 processing (200_005, 300_006)
+2025-03-31 21:12:40,587 - worker - find_perfect_numbers_range - DEBUG - Interp-3 processing (300_007, 400_008)
+2025-03-31 21:12:40,587 - worker - find_perfect_numbers_range - DEBUG - Interp-4 processing (400_009, 500_010)
+2025-03-31 21:12:40,591 - worker - find_perfect_numbers_range - DEBUG - Interp-5 processing (500_011, 600_012)
+2025-03-31 21:12:40,591 - worker - find_perfect_numbers_range - DEBUG - Interp-6 processing (600_013, 700_014)
+2025-03-31 21:12:40,591 - worker - find_perfect_numbers_range - DEBUG - Interp-7 processing (700_015, 800_016)
+2025-03-31 21:12:40,593 - worker - find_perfect_numbers_range - DEBUG - Interp-8 processing (800_017, 900_018)
+2025-03-31 21:12:40,594 - worker - find_perfect_numbers_range - DEBUG - Interp-9 processing (900_019, 1_000_000)
+2025-03-31 21:12:41,668 - perfects - find_perfect_numbers - DEBUG - Adding result from Interp-0
+2025-03-31 21:12:41,899 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Interp-2
+2025-03-31 21:12:42,161 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Interp-1
+2025-03-31 21:12:42,640 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Interp-5
+2025-03-31 21:12:42,699 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Interp-3
+2025-03-31 21:12:42,998 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Interp-4
+2025-03-31 21:12:43,299 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Interp-7
+2025-03-31 21:12:43,525 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Interp-6
+2025-03-31 21:12:43,795 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Interp-8
+2025-03-31 21:12:43,943 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Interp-9
+2025-03-31 21:12:43,961 - perfects - <module> - INFO - [6, 28, 496, 8128] are perfect numbers in 0:00:03.424068
+2025-03-31 21:12:43,961 - perfects - <module> - DEBUG - done.
+
+pause for 5 secs to coalesce ...
+
+python3.14 perfects.py -n 1_000_000 -w 10 -v -s
+2025-03-31 21:12:49,492 - app_context - log_exec_ctx - DEBUG - sys.version='3.14.0a6 (main, Mar 17 2025, 00:00:00) [GCC 14.2.1 20250110 (Red Hat 14.2.1-7)]'
+2025-03-31 21:12:49,492 - app_context - log_gil_availability - DEBUG - GIL is active
+2025-03-31 21:12:49,492 - app_context - log_exec_ctx - DEBUG - AppContext(mode=<ExecutionMode.Single: 'single'>, max_n=1000000, num_workers=10, verbose=True)
+2025-03-31 21:12:49,493 - perfects - <module> - DEBUG - starting ...
+2025-03-31 21:12:49,493 - worker - find_perfect_numbers_range - DEBUG -  processing (1, 1_000_000)
+2025-03-31 21:13:05,470 - perfects - <module> - INFO - [6, 28, 496, 8128] are perfect numbers in 0:00:15.977564
+2025-03-31 21:13:05,470 - perfects - <module> - DEBUG - done.
+
+pause for 5 secs to coalesce ...
+
+python3.14 perfects.py -n 1_000_000 -w 10 -v -t
+2025-03-31 21:13:11,004 - app_context - log_exec_ctx - DEBUG - sys.version='3.14.0a6 (main, Mar 17 2025, 00:00:00) [GCC 14.2.1 20250110 (Red Hat 14.2.1-7)]'
+2025-03-31 21:13:11,004 - app_context - log_gil_availability - DEBUG - GIL is active
+2025-03-31 21:13:11,004 - app_context - log_exec_ctx - DEBUG - AppContext(mode=<ExecutionMode.Threads: 'threads'>, max_n=1000000, num_workers=10, verbose=True)
+2025-03-31 21:13:11,004 - perfects - <module> - DEBUG - starting ...
+2025-03-31 21:13:11,005 - worker - find_perfect_numbers_range - DEBUG - Thread-0 processing (1, 100_002)
+2025-03-31 21:13:11,010 - worker - find_perfect_numbers_range - DEBUG - Thread-1 processing (100_003, 200_004)
+2025-03-31 21:13:11,020 - worker - find_perfect_numbers_range - DEBUG - Thread-2 processing (200_005, 300_006)
+2025-03-31 21:13:11,041 - worker - find_perfect_numbers_range - DEBUG - Thread-3 processing (300_007, 400_008)
+2025-03-31 21:13:11,114 - worker - find_perfect_numbers_range - DEBUG - Thread-4 processing (400_009, 500_010)
+2025-03-31 21:13:11,212 - worker - find_perfect_numbers_range - DEBUG - Thread-5 processing (500_011, 600_012)
+2025-03-31 21:13:11,456 - worker - find_perfect_numbers_range - DEBUG - Thread-6 processing (600_013, 700_014)
+2025-03-31 21:13:11,708 - worker - find_perfect_numbers_range - DEBUG - Thread-7 processing (700_015, 800_016)
+2025-03-31 21:13:11,822 - worker - find_perfect_numbers_range - DEBUG - Thread-8 processing (800_017, 900_018)
+2025-03-31 21:13:11,884 - worker - find_perfect_numbers_range - DEBUG - Thread-9 processing (900_019, 1_000_000)
+2025-03-31 21:13:16,328 - perfects - find_perfect_numbers - DEBUG - Adding result from Thread-0
+2025-03-31 21:13:18,942 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Thread-1
+2025-03-31 21:13:23,389 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Thread-3
+2025-03-31 21:13:25,209 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Thread-5
+2025-03-31 21:13:25,759 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Thread-2
+2025-03-31 21:13:25,878 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Thread-6
+2025-03-31 21:13:26,058 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Thread-7
+2025-03-31 21:13:26,178 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Thread-4
+2025-03-31 21:13:26,238 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Thread-8
+2025-03-31 21:13:27,524 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Thread-9
+2025-03-31 21:13:27,525 - perfects - <module> - INFO - [6, 28, 496, 8128] are perfect numbers in 0:00:16.521260
+2025-03-31 21:13:27,525 - perfects - <module> - DEBUG - done.
+
+pause for 5 secs to coalesce ...
+
+python3.14t perfects.py -n 1_000_000 -w 10 -v -p
+2025-03-31 21:13:33,237 - app_context - log_exec_ctx - DEBUG - sys.version='3.14.0a6 experimental free-threading build (main, Mar 17 2025, 00:00:00) [GCC 14.2.1 20250110 (Red Hat 14.2.1-7)]'
+2025-03-31 21:13:33,237 - app_context - log_gil_availability - DEBUG - GIL is disabled
+2025-03-31 21:13:33,237 - app_context - log_exec_ctx - DEBUG - AppContext(mode=<ExecutionMode.Processes: 'processes'>, max_n=1000000, num_workers=10, verbose=True)
+2025-03-31 21:13:33,237 - perfects - <module> - DEBUG - starting ...
+2025-03-31 21:13:33,327 - worker - find_perfect_numbers_range - DEBUG - Worker-0 processing (1, 100_002)
+2025-03-31 21:13:33,335 - worker - find_perfect_numbers_range - DEBUG - Worker-1 processing (100_003, 200_004)
+2025-03-31 21:13:33,349 - worker - find_perfect_numbers_range - DEBUG - Worker-2 processing (200_005, 300_006)
+2025-03-31 21:13:33,350 - worker - find_perfect_numbers_range - DEBUG - Worker-3 processing (300_007, 400_008)
+2025-03-31 21:13:33,354 - worker - find_perfect_numbers_range - DEBUG - Worker-4 processing (400_009, 500_010)
+2025-03-31 21:13:33,354 - worker - find_perfect_numbers_range - DEBUG - Worker-5 processing (500_011, 600_012)
+2025-03-31 21:13:33,355 - worker - find_perfect_numbers_range - DEBUG - Worker-6 processing (600_013, 700_014)
+2025-03-31 21:13:33,355 - worker - find_perfect_numbers_range - DEBUG - Worker-7 processing (700_015, 800_016)
+2025-03-31 21:13:33,355 - worker - find_perfect_numbers_range - DEBUG - Worker-8 processing (800_017, 900_018)
+2025-03-31 21:13:33,357 - worker - find_perfect_numbers_range - DEBUG - Worker-9 processing (900_019, 1_000_000)
+2025-03-31 21:13:34,190 - perfects - find_perfect_numbers - DEBUG - Adding result from Worker-0
+2025-03-31 21:13:34,778 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Worker-1
+2025-03-31 21:13:35,758 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Worker-2
+2025-03-31 21:13:36,439 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Worker-4
+2025-03-31 21:13:36,458 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Worker-5
+2025-03-31 21:13:36,489 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Worker-3
+2025-03-31 21:13:37,326 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Worker-9
+2025-03-31 21:13:37,475 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Worker-6
+2025-03-31 21:13:37,676 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Worker-7
+2025-03-31 21:13:37,990 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Worker-8
+2025-03-31 21:13:38,034 - perfects - <module> - INFO - [6, 28, 496, 8128] are perfect numbers in 0:00:04.797422
+2025-03-31 21:13:38,034 - perfects - <module> - DEBUG - done.
+
+pause for 5 secs to coalesce ...
+
+python3.14t perfects.py -n 1_000_000 -w 10 -v -i
+2025-03-31 21:13:43,623 - app_context - log_exec_ctx - DEBUG - sys.version='3.14.0a6 experimental free-threading build (main, Mar 17 2025, 00:00:00) [GCC 14.2.1 20250110 (Red Hat 14.2.1-7)]'
+2025-03-31 21:13:43,623 - app_context - log_gil_availability - DEBUG - GIL is disabled
+2025-03-31 21:13:43,623 - app_context - log_exec_ctx - DEBUG - AppContext(mode=<ExecutionMode.Interpreters: 'interpreters'>, max_n=1000000, num_workers=10, verbose=True)
+2025-03-31 21:13:43,623 - perfects - <module> - DEBUG - starting ...
+2025-03-31 21:13:43,858 - worker - find_perfect_numbers_range - DEBUG - Interp-0 processing (1, 100_002)
+2025-03-31 21:13:43,859 - worker - find_perfect_numbers_range - DEBUG - Interp-1 processing (100_003, 200_004)
+2025-03-31 21:13:43,859 - worker - find_perfect_numbers_range - DEBUG - Interp-2 processing (200_005, 300_006)
+2025-03-31 21:13:43,870 - worker - find_perfect_numbers_range - DEBUG - Interp-3 processing (300_007, 400_008)
+2025-03-31 21:13:43,877 - worker - find_perfect_numbers_range - DEBUG - Interp-4 processing (400_009, 500_010)
+2025-03-31 21:13:43,885 - worker - find_perfect_numbers_range - DEBUG - Interp-5 processing (500_011, 600_012)
+2025-03-31 21:13:43,885 - worker - find_perfect_numbers_range - DEBUG - Interp-6 processing (600_013, 700_014)
+2025-03-31 21:13:43,885 - worker - find_perfect_numbers_range - DEBUG - Interp-7 processing (700_015, 800_016)
+2025-03-31 21:13:43,888 - worker - find_perfect_numbers_range - DEBUG - Interp-8 processing (800_017, 900_018)
+2025-03-31 21:13:43,892 - worker - find_perfect_numbers_range - DEBUG - Interp-9 processing (900_019, 1_000_000)
+2025-03-31 21:13:44,759 - perfects - find_perfect_numbers - DEBUG - Adding result from Interp-0
+2025-03-31 21:13:45,764 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Interp-2
+2025-03-31 21:13:46,112 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Interp-1
+2025-03-31 21:13:46,764 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Interp-4
+2025-03-31 21:13:47,223 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Interp-6
+2025-03-31 21:13:47,326 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Interp-3
+2025-03-31 21:13:47,724 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Interp-5
+2025-03-31 21:13:48,299 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Interp-9
+2025-03-31 21:13:48,311 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Interp-8
+2025-03-31 21:13:48,523 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Interp-7
+2025-03-31 21:13:48,610 - perfects - <module> - INFO - [6, 28, 496, 8128] are perfect numbers in 0:00:04.986974
+2025-03-31 21:13:48,610 - perfects - <module> - DEBUG - done.
+
+pause for 5 secs to coalesce ...
+
+python3.14t perfects.py -n 1_000_000 -w 10 -v -s
+2025-03-31 21:13:54,168 - app_context - log_exec_ctx - DEBUG - sys.version='3.14.0a6 experimental free-threading build (main, Mar 17 2025, 00:00:00) [GCC 14.2.1 20250110 (Red Hat 14.2.1-7)]'
+2025-03-31 21:13:54,168 - app_context - log_gil_availability - DEBUG - GIL is disabled
+2025-03-31 21:13:54,168 - app_context - log_exec_ctx - DEBUG - AppContext(mode=<ExecutionMode.Single: 'single'>, max_n=1000000, num_workers=10, verbose=True)
+2025-03-31 21:13:54,168 - perfects - <module> - DEBUG - starting ...
+2025-03-31 21:13:54,168 - worker - find_perfect_numbers_range - DEBUG -  processing (1, 1_000_000)
+2025-03-31 21:14:17,278 - perfects - <module> - INFO - [6, 28, 496, 8128] are perfect numbers in 0:00:23.109465
+2025-03-31 21:14:17,278 - perfects - <module> - DEBUG - done.
+
+pause for 5 secs to coalesce ...
+
+python3.14t perfects.py -n 1_000_000 -w 10 -v -t
+2025-03-31 21:14:22,763 - app_context - log_exec_ctx - DEBUG - sys.version='3.14.0a6 experimental free-threading build (main, Mar 17 2025, 00:00:00) [GCC 14.2.1 20250110 (Red Hat 14.2.1-7)]'
+2025-03-31 21:14:22,763 - app_context - log_gil_availability - DEBUG - GIL is disabled
+2025-03-31 21:14:22,763 - app_context - log_exec_ctx - DEBUG - AppContext(mode=<ExecutionMode.Threads: 'threads'>, max_n=1000000, num_workers=10, verbose=True)
+2025-03-31 21:14:22,763 - perfects - <module> - DEBUG - starting ...
+2025-03-31 21:14:22,764 - worker - find_perfect_numbers_range - DEBUG - Thread-0 processing (1, 100_002)
+2025-03-31 21:14:22,764 - worker - find_perfect_numbers_range - DEBUG - Thread-1 processing (100_003, 200_004)
+2025-03-31 21:14:22,765 - worker - find_perfect_numbers_range - DEBUG - Thread-2 processing (200_005, 300_006)
+2025-03-31 21:14:22,765 - worker - find_perfect_numbers_range - DEBUG - Thread-3 processing (300_007, 400_008)
+2025-03-31 21:14:22,765 - worker - find_perfect_numbers_range - DEBUG - Thread-4 processing (400_009, 500_010)
+2025-03-31 21:14:22,765 - worker - find_perfect_numbers_range - DEBUG - Thread-5 processing (500_011, 600_012)
+2025-03-31 21:14:22,765 - worker - find_perfect_numbers_range - DEBUG - Thread-6 processing (600_013, 700_014)
+2025-03-31 21:14:22,765 - worker - find_perfect_numbers_range - DEBUG - Thread-7 processing (700_015, 800_016)
+2025-03-31 21:14:22,766 - worker - find_perfect_numbers_range - DEBUG - Thread-8 processing (800_017, 900_018)
+2025-03-31 21:14:22,766 - worker - find_perfect_numbers_range - DEBUG - Thread-9 processing (900_019, 1_000_000)
+2025-03-31 21:14:24,066 - perfects - find_perfect_numbers - DEBUG - Adding result from Thread-0
+2025-03-31 21:14:25,017 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Thread-1
+2025-03-31 21:14:25,356 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Thread-4
+2025-03-31 21:14:25,541 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Thread-2
+2025-03-31 21:14:26,353 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Thread-7
+2025-03-31 21:14:26,382 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Thread-3
+2025-03-31 21:14:26,595 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Thread-5
+2025-03-31 21:14:26,759 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Thread-9
+2025-03-31 21:14:27,167 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Thread-8
+2025-03-31 21:14:27,342 - perfects - find_perfect_numbers - DEBUG - Skipping empty result from Thread-6
+2025-03-31 21:14:27,343 - perfects - <module> - INFO - [6, 28, 496, 8128] are perfect numbers in 0:00:04.579896
+2025-03-31 21:14:27,343 - perfects - <module> - DEBUG - done.
