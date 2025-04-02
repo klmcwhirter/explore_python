@@ -6,13 +6,13 @@ BEGIN {
 }
 
 $0 ~ "^python" {
-    printf "| %s ", $0
+    cli = $0
 }
 
 /perfect numbers/ {
     rb = index($0, "[")
     re = index($0, "]")
     results = substr($0, rb, re - rb + 1)
-    print " | " results " | " $NF " |"
-    # print "rb=" rb ", re=" re
+
+    print "| " cli " | " results " | " $NF " |"
 }
