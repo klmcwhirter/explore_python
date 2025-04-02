@@ -22,3 +22,5 @@ do
     done
   done
 done 2>&1 | tee perfects_driver.out
+
+gawk -f log2table.awk perfects_driver.out >perfects_driver.md

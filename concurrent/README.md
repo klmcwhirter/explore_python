@@ -70,7 +70,7 @@ Here are the [results](./perfects_driver-py313-fed40.out) from one typical run w
 
 _I retested with Python 3.14.0a1 on Fedora 41. Here are those [results](./perfects_driver-py314a1-fed41.out)._
 
-_I retested with Python 3.14.0a6 on Fedora 41 and added the `-i` option. Here are those [results](./perfects_driver-py314a6-fed41.out)._
+_I retested with Python 3.14.0a6 on Fedora 41 and added the `-i` option. Here are those [results](./perfects_driver-py314a6-fed41.out). See **Appendix B** below._
 
 ### Production Executable (python3.13)
 
@@ -127,7 +127,7 @@ In addition, the potential risks associated with execution integrity without the
 executable in production is not supported yet. And the results above do not show a compelling reason to do so.
 
 
-### Production Executable (python3.14)
+### Development Executable (python3.14)
 
 In Python 3.14 the [`concurrent.futures.InterpreterPoolExecutor`](https://docs.python.org/3.14/library/concurrent.futures.html#interpreterpoolexecutor) class was added per [PEP-734](https://peps.python.org/pep-0734/#interpreterpoolexecutor).
 
@@ -176,12 +176,36 @@ associated with more aggressive context switching; resulting in additional resou
 | python3.13t perfects.py -n 33_551_000 -w 12 -t -v | [6, 28, 496, 8128, 33550336] | 0:18:27.886885 |
 
 
-### Appendix B - InterpreterPoolExecutor vs ProcessPoolExecutor
+## Appendix B - InterpreterPoolExecutor vs ProcessPoolExecutor
 
-### Production Executable (python3.14)
+### Development Executable (python3.14)
+
+This first section captures the relative performance of the various options with python3.14(t).
+
+There is no suprise here, except the newcomer - **-i** - which is the clear winner.
+
+| Command Line | Results | Elapsed Time |
+| :-- | :--: | --: |
+| python3.14 perfects.py -n 1_000_000 -w 10 -v -p  | [6, 28, 496, 8128] | 0:00:03.559670 |
+| **python3.14** perfects.py -n 1_000_000 -w 10 -v **-i**  | [6, 28, 496, 8128] | **0:00:03.424068** |
+| python3.14 perfects.py -n 1_000_000 -w 10 -v -s  | [6, 28, 496, 8128] | 0:00:15.977564 |
+| python3.14 perfects.py -n 1_000_000 -w 10 -v -t  | [6, 28, 496, 8128] | 0:00:16.521260 |
+
+| Command Line | Results | Elapsed Time |
+| :-- | :--: | --: |
+| python3.14t perfects.py -n 1_000_000 -w 10 -v -p  | [6, 28, 496, 8128] | 0:00:04.797422 |
+| python3.14t perfects.py -n 1_000_000 -w 10 -v -i  | [6, 28, 496, 8128] | 0:00:04.986974 |
+| python3.14t perfects.py -n 1_000_000 -w 10 -v -s  | [6, 28, 496, 8128] | 0:00:23.109465 |
+| **python3.14t** perfects.py -n 1_000_000 -w 10 -v **-t**  | [6, 28, 496, 8128] | **0:00:04.579896** |
+
+
+### Results with `-n 33_551_000` and `-w 12`
+
+In this section the `max_n` is bumped up as well as the number of workers.
+
+This makes it clear that `InterpreterPoolExecutor` is walking away from the pack.
 
 | Command Line | Results | Elapsed Time |
 | :-- | :--: | --: |
 | **python3.14** perfects.py -n 33_551_000 -w 12 **-i** -v | [6, 28, 496, 8128, 33550336] | **0:10:23.770246** |
 | python3.14 perfects.py -n 33_551_000 -w 12 -p -v | [6, 28, 496, 8128, 33550336] | 0:10:31.152181 |
-
