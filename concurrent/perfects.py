@@ -11,14 +11,15 @@ import multiprocessing as mp
 from datetime import datetime, timedelta
 
 from app_context import AppContext, ExecutionMode, parse_args
-from worker import find_perfect_numbers_range, worker_name
+from worker import WorkerContext, find_perfect_numbers_range
 
 
 def find_perfect_numbers(ctx: AppContext) -> list[int]:
     '''Orchestrates the process for finding perfect numbers'''
 
     if ctx.mode == ExecutionMode.Single:
-        return find_perfect_numbers_range(rng=(1, ctx.max_n), idx=0, worker_prefix=ctx.worker_prefix())
+        worker_ctx = WorkerContext(prefix=ctx.worker_prefix(), idx=0, rng=(1, ctx.max_n))
+        return find_perfect_numbers_range(ctx=worker_ctx)
 
     results = set[int]()
 
@@ -45,20 +46,25 @@ def find_perfect_numbers(ctx: AppContext) -> list[int]:
 
             return windows
 
-        futures = {
-            executor.submit(find_perfect_numbers_range, rng=rng, idx=idx, worker_prefix=ctx.worker_prefix()): idx
+        _worker_contexts = [
+            WorkerContext(prefix=ctx.worker_prefix(), idx=idx, rng=rng)
             for idx, rng in enumerate(_number_ranges(ctx.max_n, ctx.num_workers))
+        ]
+
+        futures = {
+            executor.submit(find_perfect_numbers_range, ctx=worker_ctx): worker_ctx
+            for worker_ctx in _worker_contexts
         }
 
         for future in concurrent.futures.as_completed(futures):
-            idx = futures[future]
+            worker_ctx = futures[future]
             result = future.result()
 
             if result and len(result) > 0:
-                logging.debug(f'Adding result from {worker_name(worker_prefix=ctx.worker_prefix(), idx=idx)}')
+                logging.debug(f'Adding result from {worker_ctx.name}')
                 results.update(result)
             else:
-                logging.debug(f'Skipping empty result from {worker_name(worker_prefix=ctx.worker_prefix(), idx=idx)}')
+                logging.debug(f'Skipping empty result from {worker_ctx.name}')
 
     return sorted(list(results))
 

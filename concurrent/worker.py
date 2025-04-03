@@ -10,10 +10,23 @@ See https://docs.python.org/3.14/library/concurrent.futures.html#interpreterpool
 '''
 
 import logging
+from dataclasses import dataclass
 from functools import reduce
 
 
-def find_perfect_numbers_range(rng: tuple[int], idx: int, worker_prefix: str) -> list[int]:
+@dataclass
+class WorkerContext:
+    prefix: str
+    idx: int
+    rng: tuple[int]
+
+    @property
+    def name(self) -> str:
+        rc = f'{self.prefix}-{self.idx}' if len(self.prefix) > 0 else ''
+        return rc
+
+
+def find_perfect_numbers_range(ctx: WorkerContext) -> list[int]:
     '''worker function that finds perfect numbers within a range of values for n'''
 
     def _is_perfect_number(n: int) -> bool:
@@ -30,13 +43,8 @@ def find_perfect_numbers_range(rng: tuple[int], idx: int, worker_prefix: str) ->
 
         return n == sum(f for f in _factors(n) if n != f)
 
-    logging.debug(f'{worker_name(worker_prefix=worker_prefix, idx=idx)} processing ({rng[0]:_}, {rng[-1]:_})')
+    logging.debug(f'{ctx.name} processing ({ctx.rng[0]:_}, {ctx.rng[-1]:_})')
 
-    rc = [i for i in range(rng[0], rng[-1]+1) if _is_perfect_number(i)]
+    rc = [i for i in range(ctx.rng[0], ctx.rng[-1]+1) if _is_perfect_number(i)]
 
-    return rc
-
-
-def worker_name(worker_prefix: str, idx=0) -> str:
-    rc = f'{worker_prefix}-{idx}' if len(worker_prefix) > 0 else worker_prefix
     return rc

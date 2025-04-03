@@ -11,7 +11,7 @@ pdm test --run-slow # skip slowest tests
 pdm test --run-slowest # be prepared to wait 5 mins or so
 ```
 
-## Concurrency Testing of python3.13t
+## Parallelism Testing of python3.13t
 
 I put together a simple test of the NoGIL behavior compiled into the experimental python3.13t executable.
 

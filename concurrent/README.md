@@ -1,6 +1,13 @@
 # Experiments on Performance of NoGIL Compile-time Option Added in python3.13t
 
-The [`perfects.py`](./perfects.py) module finds [perfect numbers](https://mathworld.wolfram.com/PerfectNumber.html) from 1 up to and including some `max_n` value.
+## Background
+
+In Python 3.13 an implementation of [PEP-703](https://peps.python.org/pep-0703/) was made available on an experimental basis. The abstract of that PEP claims that:
+> The GIL is an obstacle to using multi-core CPUs from Python efficiently. This PEP proposes adding a build configuration (--disable-gil) to CPython to let it run Python code without the global interpreter lock and with the necessary changes needed to make the interpreter thread-safe.
+
+## Overview
+
+The [`perfects.py`](./perfects.py) module in this project finds [perfect numbers](https://mathworld.wolfram.com/PerfectNumber.html) from 1 up to and including some `max_n` value.
 
 This problem is suitable for testing parallelism with concurrent execution models because:
 
@@ -29,9 +36,26 @@ In other words, what is the significance of the NoGIL behavior and its direct ef
 
 Also, I eliminated concurrency as a variable by carefully designing away shared state. The worker function simply takes some inputs and returns found perfect numbers in the range of numbers it is evaluating.
 
+> This project is named `concurrent` because initially I thought I would be testing for the underlying risk of the missing GIL - namely data corruption when using libraries like `numpy`, etc. Was the promise of maintained thread-safety (PEP-703) in the interpreter truly realized or not?
+>
+> But I realized there was an underlying assumption that led to that concern. Many were assuming that eliminating the GIL would lead inherently to better performance with CPU bound problems.
+>
+> And so this project was pivoted to validate that assumption. I am glad I did. _See_ **TL;DR** _below._
+>
+> When and if a point is reached where there is a measurable performance gain, then (and only then) I will return to experimenting with the additional complexity involved in accomplishing concurrency with a NoGIL Python interpreter.
+
+If performance cannot be increased by utilizing threads across multiple cores with a stateless worker design, then there is no point in testing shared, concurrent state.
+
+Until then ...
+
 ### TL;DR
 
 The effect of NoGIL on performance is not much if anything with lower values of `max_n`; and significantly worse performance with higher values.
+
+Since the perceived benefit of NoGIL is the potential for utilizing multiple cores via multiple threads to help solve for CPU bound problem sets, it
+seems that Guido Van Rossum was absolutely justified to introduce the GIL.
+
+Other efforts such as Per-Interpreter GIL ([PEP-684](https://peps.python.org/pep-0684/)), InterpreterPoolExecutor ([PEP-734](https://peps.python.org/pep-0684/)), etc. have provided a less intrusive solution to the multi-core utilization issue then disabling the GIL ([PEP-703](https://peps.python.org/pep-0703/)).
 
 ## Command-line Options
 
@@ -145,7 +169,7 @@ In general, I avoided the need for concurrency (i.e., no shared state) to minimi
 
 Just stick with the `Processes` model for now while the experimentation continues. It is supported as early as Python 3.5.
 
-Although the `Interpreters` model could be a good (i.e., safe) alternative once Python 3.14 is released. I say _safe_ because the GIL is still in effect suggesting that most flows through the Python interpreter and stdlib code are flows through long-time existing code. But please do test fit for your purpose.
+The `Interpreters` model could become the preferred (i.e., safe) alternative, however, once Python 3.14 is released in Oct 2025 (See [PEP-745](https://peps.python.org/pep-0745/)). I say _safe_ because the GIL is still in effect suggesting that most flows through the Python interpreter, stdlib and 3rd-party library code are flows through long-time existing code. But please do test fit for your purpose.
 
 
 ## Appendix A - Results with `-n 33_551_000` and `-w 12`
@@ -186,17 +210,17 @@ There is no suprise here, except the newcomer - **-i** - which is the clear winn
 
 | Command Line | Results | Elapsed Time |
 | :-- | :--: | --: |
-| python3.14 perfects.py -n 1_000_000 -w 10 -v -p  | [6, 28, 496, 8128] | 0:00:03.559670 |
-| **python3.14** perfects.py -n 1_000_000 -w 10 -v **-i**  | [6, 28, 496, 8128] | **0:00:03.424068** |
-| python3.14 perfects.py -n 1_000_000 -w 10 -v -s  | [6, 28, 496, 8128] | 0:00:15.977564 |
-| python3.14 perfects.py -n 1_000_000 -w 10 -v -t  | [6, 28, 496, 8128] | 0:00:16.521260 |
+| python3.14 perfects.py -n 1_000_000 -w 10 -v -p  | [6, 28, 496, 8128] | 0:00:03.408228 |
+| **python3.14** perfects.py -n 1_000_000 -w 10 -v **-i**  | [6, 28, 496, 8128] | **0:00:03.303046** |
+| python3.14 perfects.py -n 1_000_000 -w 10 -v -s  | [6, 28, 496, 8128] | 0:00:15.990855 |
+| python3.14 perfects.py -n 1_000_000 -w 10 -v -t  | [6, 28, 496, 8128] | 0:00:16.590999 |
 
 | Command Line | Results | Elapsed Time |
 | :-- | :--: | --: |
-| python3.14t perfects.py -n 1_000_000 -w 10 -v -p  | [6, 28, 496, 8128] | 0:00:04.797422 |
-| python3.14t perfects.py -n 1_000_000 -w 10 -v -i  | [6, 28, 496, 8128] | 0:00:04.986974 |
-| python3.14t perfects.py -n 1_000_000 -w 10 -v -s  | [6, 28, 496, 8128] | 0:00:23.109465 |
-| **python3.14t** perfects.py -n 1_000_000 -w 10 -v **-t**  | [6, 28, 496, 8128] | **0:00:04.579896** |
+| python3.14t perfects.py -n 1_000_000 -w 10 -v -p  | [6, 28, 496, 8128] | 0:00:04.471091 |
+| python3.14t perfects.py -n 1_000_000 -w 10 -v -i  | [6, 28, 496, 8128] | 0:00:04.827538 |
+| python3.14t perfects.py -n 1_000_000 -w 10 -v -s  | [6, 28, 496, 8128] | 0:00:23.126717 |
+| **python3.14t** perfects.py -n 1_000_000 -w 10 -v **-t**  | [6, 28, 496, 8128] | **0:00:04.735871** |
 
 
 ### Results with `-n 33_551_000` and `-w 12`
