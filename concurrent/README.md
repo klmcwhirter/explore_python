@@ -53,7 +53,7 @@ Until then ...
 The effect of NoGIL on performance is not much if anything with lower values of `max_n`; and significantly worse performance with higher values.
 
 Since the perceived benefit of NoGIL is the potential for utilizing multiple cores via multiple threads to help solve for CPU bound problem sets, it
-seems that Guido Van Rossum was absolutely justified to introduce the GIL.
+seems that Guido van Rossum was absolutely justified to introduce the GIL.
 
 Other efforts such as Per-Interpreter GIL ([PEP-684](https://peps.python.org/pep-0684/)), InterpreterPoolExecutor ([PEP-734](https://peps.python.org/pep-0684/)), etc. have provided a less intrusive solution to the multi-core utilization issue then disabling the GIL ([PEP-703](https://peps.python.org/pep-0703/)).
 
